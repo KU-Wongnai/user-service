@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
@@ -14,6 +15,9 @@ class UserController extends Controller
      */
     public function addRole(Request $request) 
     {    
+
+        Gate::authorize('isAdmin', User::class);
+
         $request->validate([
             'user_id' => ['required'],
             'role_name' => ['required'],
