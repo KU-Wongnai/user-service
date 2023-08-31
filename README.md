@@ -56,3 +56,65 @@ This should return the user profile
 With `Authorization: Bearer <JWT_Token>` to invalidate token
 
 > There are more routes that created by laravel/fortify but not listed in here. Please refer to the docs for more information
+
+### Role
+
+User can has many roles, for example user can be a normal user or a rider that delivery food to customers
+
+```json
+{
+    "id": 1,
+    "name": "John Doe",
+    "email": "johndoe@dev.io",
+    "email_verified_at": null,
+    "two_factor_secret": null,
+    "two_factor_recovery_codes": null,
+    "two_factor_confirmed_at": null,
+    "created_at": "2023-08-31T07:44:30.000000Z",
+    "updated_at": "2023-08-31T07:44:30.000000Z",
+    "roles": [
+        {
+            "id": 1,
+            "name": "user",
+            "created_at": "2023-08-31T07:44:17.000000Z",
+            "updated_at": "2023-08-31T07:44:17.000000Z",
+            "pivot": {
+                "user_id": 1,
+                "role_id": 1
+            }
+        },
+        {
+            "id": 2,
+            "name": "rider",
+            "created_at": "2023-08-31T07:44:17.000000Z",
+            "updated_at": "2023-08-31T07:44:17.000000Z",
+            "pivot": {
+                "user_id": 1,
+                "role_id": 2
+            }
+        }
+    ]
+}
+```
+
+Add role to user
+
+> POST -> http://localhost:8090/api/user/role
+
+```
+{
+  user_id: 1,
+  role_name: "rider"
+}
+```
+
+Remove role to user
+
+> DELETE -> http://localhost:8090/api/user/role
+
+```
+{
+  user_id: 1,
+  role_name: "rider"
+}
+```

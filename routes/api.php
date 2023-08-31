@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -31,4 +32,13 @@ Route::group([
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('me', [AuthController::class, 'me']);
 
+});
+
+Route::middleware('auth:api')->group(function () {
+    
+    Route::prefix('user')->group(function () {
+        Route::post('role', [UserController::class, 'addRole']);
+        Route::delete('role', [UserController::class, 'removeRole']);
+    });
+    
 });
