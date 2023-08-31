@@ -32,6 +32,10 @@ class UserController extends Controller
             abort(400, "No user was found with the given id = {$user_id}");
         }
 
+        if ($user->hasRole($role->name)) {
+            abort(400, "This user already had this role");
+        }
+
         $user->roles()->attach($role->id);
 
         return [
