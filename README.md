@@ -59,7 +59,7 @@ With `Authorization: Bearer <JWT_Token>` to invalidate token
 
 ### Role
 
-User can has many roles, for example user can be a normal user or a rider that delivery food to customers
+User can has many roles, for example user can be a normal user or a rider that delivery food to customers. Only admin has an access to this functionality.
 
 ```json
 {
