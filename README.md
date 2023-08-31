@@ -49,4 +49,10 @@ Authorization: Bearer <JWT_Token>
 
 This should return the user profile
 
+### Logout
+
+> POST -> http://localhost:8090/api/auth/logout
+
+With `Authorization: Bearer <JWT_Token>` to invalidate token
+
 > There are more routes that created by laravel/fortify but not listed in here. Please refer to the docs for more information
