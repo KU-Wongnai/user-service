@@ -73,4 +73,14 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->roles->contains('name', $role_name);
     }
+
+    public function userProfile()
+    {
+        return $this->hasOne(UserProfile::class, 'user_id');
+    }
+
+    public function riderProfile()
+    {
+        return $this->hasOne(RiderProfile::class, 'user_id');
+    }
 }

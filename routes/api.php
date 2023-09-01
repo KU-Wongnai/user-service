@@ -39,6 +39,9 @@ Route::middleware('auth:api')->group(function () {
     Route::prefix('user')->group(function () {
         Route::post('role', [UserController::class, 'addRole']);
         Route::delete('role', [UserController::class, 'removeRole']);
+
+        Route::post('profile/user', [UserController::class, 'createUserProfile']);
+        Route::post('profile/rider', [UserController::class, 'createRiderProfile']);
     });
     
 });

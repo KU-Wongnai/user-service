@@ -72,4 +72,72 @@ class UserController extends Controller
             'success' => true,
         ];
     }
+
+    public function createUserProfile(Request $request) {
+        $validateInput = $request->validate([
+            'user_id' => ['required'],
+            'phone_number' => ['required', 'size:10'],
+            'birth_date' => ['required', 'date'],
+            'address' => ['nullable', 'min:1', 'max:255'],
+            'avatar' => ['nullable'],
+            'student_id' => ['nullable', 'size:10'],
+            'faculty' => ['nullable', 'min:1', 'max:255'],
+            'major' => ['nullable', 'min:1', 'max:255'],
+            'favorite_food' => ['nullable', 'min:1', 'max:255'],
+            'allergy_food' => ['nullable', 'min:1', 'max:255'],
+            'point' => ['nullable', 'numeric', 'min:0'],
+
+        ]);
+
+        $user_id = $request->get('user_id');
+        $user = User::find($user_id);
+
+        if ($user == null) {
+            abort(400, "No user was found with the given id = {$user_id}");
+        }
+
+        if ($user->id !== auth()->user()->id) {
+            abort(403, "You are not allowed to create profile for other user");
+        }
+
+        $user->userProfile()->create($validateInput);
+
+        return [
+            'message' => 'User profile created successfully',
+            'success' => true,
+        ];
+    }
+
+    public function createRiderProfile(Request $request) {
+        $validateInput = $request->validate([
+            'user_id' => ['required'],
+            'phone_number' => ['required', 'size:10'],
+            'birth_date' => ['required', 'date'],
+            'id_card' => ['required', 'size:13'],
+            'bank_account_number' => ['required', 'size:10'],
+            'avatar' => ['nullable'],
+            'student_id' => ['nullable', 'size:10'],
+            'faculty' => ['nullable', 'min:1', 'max:255'],
+            'major' => ['nullable', 'min:1', 'max:255'],
+            'desire_location' => ['nullable', 'min:1', 'max:255'],
+        ]);
+
+        $user_id = $request->get('user_id');
+        $user = User::find($user_id);
+
+        if ($user == null) {
+            abort(400, "No user was found with the given id = {$user_id}");
+        }
+
+        if ($user->id !== auth()->user()->id) {
+            abort(403, "You are not allowed to create profile for other user");
+        }
+
+        $user->riderProfile()->create($validateInput);
+
+        return [
+            'message' => 'Rider profile created successfully',
+            'success' => true,
+        ];
+    }
 }
