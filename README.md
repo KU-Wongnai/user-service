@@ -15,7 +15,7 @@ Service run at http://localhost:8090
 
 > POST -> http://localhost:8090/register
 
-```
+```json
 {
     "name": "Non",
     "email": "qu1etboy@dev.io",
@@ -28,7 +28,7 @@ Service run at http://localhost:8090
 
 > POST -> http://localhost:8090/api/auth/login
 
-```
+```json
 {
     "email": "qu1etboy@dev.io",
     "password": "12345678"
@@ -60,6 +60,12 @@ With `Authorization: Bearer <JWT_Token>` to invalidate token
 ### Role
 
 User can has many roles, for example user can be a normal user or a rider that delivery food to customers. Only admin has an access to this functionality.
+
+Currently fixed to only 3 roles
+
+-   User
+-   Rider
+-   Admin
 
 ```json
 {
@@ -101,20 +107,50 @@ Add role to user
 
 > POST -> http://localhost:8090/api/user/role
 
-```
+```json
 {
-  user_id: 1,
-  role_name: "rider"
+    "user_id": 1,
+    "role_name": "rider"
 }
 ```
 
-Remove role to user
+Remove role from user
 
 > DELETE -> http://localhost:8090/api/user/role
 
-```
+```json
 {
-  user_id: 1,
-  role_name: "rider"
+    "user_id": 1,
+    "role_name": "rider"
+}
+```
+
+### Profile
+
+User can has 2 profile. One for normal user and second for rider. This action will update or create if no profile found.
+
+User profile
+
+> PUT -> http://localhost:8090/api/user/profile/user
+
+```json
+{
+    "user_id": 2,
+    "phone_number": "0123456789",
+    "birth_date": "2003-3-5"
+}
+```
+
+Rider profile
+
+> PUT -> http://localhost:8090/api/user/profile/rider
+
+```json
+{
+    "user_id": 2,
+    "phone_number": "0890708155",
+    "birth_date": "2003-3-5",
+    "bank_account_number": "1234567890",
+    "id_card": "1234567890123"
 }
 ```
