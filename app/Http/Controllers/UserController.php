@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\RiderProfile;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -74,6 +75,9 @@ class UserController extends Controller
         ];
     }
 
+    /**
+     * Create user profile
+     */
     public function createUserProfile(Request $request) {
         $validateInput = $request->validate([
             'user_id' => ['required'],
@@ -114,6 +118,9 @@ class UserController extends Controller
         ];
     }
 
+    /**
+     * Create rider profile
+     */
     public function createRiderProfile(Request $request) {
         $validateInput = $request->validate([
             'user_id' => ['required'],
@@ -149,4 +156,85 @@ class UserController extends Controller
             'success' => true,
         ];
     }
+
+    /**
+     * Give score to rider from 0 to 5
+     */
+    public function giveScoreToRider(Request $request, User $user) {
+
+        $request->validate([
+            'score' => ['required', 'numeric', 'min:0', 'max:5'],
+        ]);
+
+        if ($user->id === auth()->user()->id) {
+            abort(403, "You are not allowed to give score to yourself");
+        }
+
+        // Check if user has rider profile
+        $riderProfile = RiderProfile::where('user_id', '=', $user->id)->first();
+
+        if ($riderProfile == null) {
+            abort(400, "This user do not have a rider profile");
+        }
+
+        $riderProfile->score = $request->get('score');
+        $riderProfile->save();
+
+        return [
+            'message' => 'Score given successfully',
+            'success' => true,
+        ];
+    }
+
+    /**
+     * Update rider status to pending, rejected, or verified
+     */
+    public function updateRiderStatus(Request $request, User $user) {
+        
+        Gate::authorize('isAdmin', User::class);
+
+        $request->validate([
+            'status' => ['required', 'in:pending,rejected,verified'],
+        ]);
+
+        if ($user->id === auth()->user()->id) {
+            abort(403, "You are not allowed to set status to yourself");
+        }
+
+        // Check if user has rider profile
+        $riderProfile = RiderProfile::where('user_id', '=', $user->id)->first();
+
+        if ($riderProfile == null) {
+            abort(400, "This user do not have a rider profile");
+        }
+
+        $riderProfile->status = $request->get('status');
+        $riderProfile->rider_verified_at = $request->get('status') === 'verified' ? now() : null;
+        $riderProfile->save();
+
+        return [
+            'message' => 'Status set successfully',
+            'success' => true,
+        ];
+    }
+
+    /**
+     * Delete user from database
+     */
+    public function destory(User $user) {
+        
+        // Don't allow user to delete other user
+        if ($user->id !== auth()->user()->id) {
+            abort(403, "You are not allowed to delete other user");
+        }
+
+        $user->delete();
+
+        return [
+            'message' => 'User deleted successfully',
+            'success' => true,
+        ];
+    }
+
+
 }

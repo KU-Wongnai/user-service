@@ -30,6 +30,13 @@ return new class extends Migration
             // Location that rider can easily go to
             $table->string('desire_location')->nullable();
 
+            // Score that user gave to rider
+            $table->integer('score')->default(0);
+
+            $table->enum('status', ['pending', 'rejected', 'verified'])->default('pending');
+            $table->timestamp('rider_verified_at')->nullable();
+
+
             $table->timestamps(); // created_at, updated_at
 
             $table->primary('user_id');

@@ -42,6 +42,9 @@ Route::middleware('auth:api')->group(function () {
 
         Route::put('profile/user', [UserController::class, 'createUserProfile']);
         Route::put('profile/rider', [UserController::class, 'createRiderProfile']);
+
+        Route::post('{user}/score', [UserController::class, 'giveScoreToRider']);
+        Route::put('{user}/status', [UserController::class, 'updateRiderStatus']);
     });
     
 });
