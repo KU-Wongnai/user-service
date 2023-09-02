@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('user_profiles', function (Blueprint $table) {
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             
-            $table->id();
+            // $table->id();
             $table->string('phone_number');
             $table->date('birth_date');
             $table->string('address')->nullable();
@@ -34,6 +34,8 @@ return new class extends Migration
             $table->float('point')->default(0);
 
             $table->timestamps(); // created_at, updated_at
+
+            $table->primary('user_id');
         });
     }
 

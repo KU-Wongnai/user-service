@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\UserProfile;
 use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
@@ -100,7 +101,12 @@ class UserController extends Controller
             abort(403, "You are not allowed to create profile for other user");
         }
 
-        $user->userProfile()->create($validateInput);
+        // unset($validateInput['user_id']);
+
+        $user->userProfile()->updateOrCreate(
+            ['user_id' => $user->id], 
+            $validateInput
+        );
 
         return [
             'message' => 'User profile created successfully',
@@ -133,7 +139,10 @@ class UserController extends Controller
             abort(403, "You are not allowed to create profile for other user");
         }
 
-        $user->riderProfile()->create($validateInput);
+        $user->riderProfile()->updateOrCreate(
+            ['user_id' => $user->id], 
+            $validateInput
+        );
 
         return [
             'message' => 'Rider profile created successfully',

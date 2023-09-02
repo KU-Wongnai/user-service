@@ -9,6 +9,8 @@ class RiderProfile extends Model
 {
     use HasFactory;
 
+    public $primaryKey = 'user_id';
+
     protected $fillable = [
         'user_id',
         'phone_number',

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('rider_profiles', function (Blueprint $table) {
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             
-            $table->id();
+            // $table->id();
             $table->string('phone_number');
             $table->string('id_card');
             $table->date('birth_date');
@@ -31,6 +31,8 @@ return new class extends Migration
             $table->string('desire_location')->nullable();
 
             $table->timestamps(); // created_at, updated_at
+
+            $table->primary('user_id');
 
         });
     }
