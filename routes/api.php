@@ -30,21 +30,27 @@ Route::group([
     Route::post('login', [AuthController::class, 'login']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
-    Route::post('me', [AuthController::class, 'me']);
 
 });
 
 Route::middleware('auth:api')->group(function () {
     
-    Route::prefix('user')->group(function () {
+    Route::prefix('users')->group(function () {
+        Route::get('', [UserController::class, 'findAll']);
+        Route::post('me', [UserController::class, 'me']);
+        Route::delete('me', [UserController::class, 'deleteMyAccount']);
+        
         Route::post('role', [UserController::class, 'addRole']);
         Route::delete('role', [UserController::class, 'removeRole']);
+
 
         Route::put('profile/user', [UserController::class, 'createUserProfile']);
         Route::put('profile/rider', [UserController::class, 'createRiderProfile']);
 
         Route::post('{user}/score', [UserController::class, 'giveScoreToRider']);
         Route::put('{user}/status', [UserController::class, 'updateRiderStatus']);
+
+        Route::delete('{user}', [UserController::class, 'destroy']);
     });
     
 });

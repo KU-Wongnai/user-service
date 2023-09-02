@@ -11,6 +11,48 @@ use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
+
+    /**
+     * Get all users
+     */
+    public function findAll() {
+        Gate::authorize('isAdmin', User::class);
+        
+        return User::with('roles')
+                    ->with('userProfile')
+                    ->with('riderProfile')
+                    ->get();
+    }
+
+    /**
+     * Get the authenticated User.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function me()
+    {
+        $user = User::with('roles')
+                    ->with('userProfile')
+                    ->with('riderProfile')
+                    ->find(auth()->user()->id);
+                    
+        return response()->json($user);
+    }
+    
+    /**
+     * Delete my account
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteMyAccount() {
+        $user = User::find(auth()->user()->id);
+        $user->delete();
+        return response()->json([
+            'message' => 'User deleted successfully',
+            'success' => true,
+        ]);
+    }
+
     /**
      * Added role to the user
      * Note: User can has many roles
@@ -47,7 +89,7 @@ class UserController extends Controller
     }
 
     /**
-     * Added role to the user
+     * Added role to the user by admin
      * Note: User can has many roles
      */
     public function removeRole(Request $request) 
@@ -112,6 +154,8 @@ class UserController extends Controller
             $validateInput
         );
 
+        // TODO: publish to message queue
+
         return [
             'message' => 'User profile created successfully',
             'success' => true,
@@ -151,6 +195,8 @@ class UserController extends Controller
             $validateInput
         );
 
+        // TODO: publish to message queue
+
         return [
             'message' => 'Rider profile created successfully',
             'success' => true,
@@ -187,7 +233,7 @@ class UserController extends Controller
     }
 
     /**
-     * Update rider status to pending, rejected, or verified
+     * Update rider status to pending, rejected, or verified by admin
      */
     public function updateRiderStatus(Request $request, User $user) {
         
@@ -219,15 +265,11 @@ class UserController extends Controller
     }
 
     /**
-     * Delete user from database
+     * Delete user from database by admin
      */
-    public function destory(User $user) {
+    public function destroy(User $user) {
         
-        // Don't allow user to delete other user
-        if ($user->id !== auth()->user()->id) {
-            abort(403, "You are not allowed to delete other user");
-        }
-
+        Gate::authorize('isAdmin', User::class);
         $user->delete();
 
         return [

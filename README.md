@@ -39,7 +39,7 @@ After succesfully logged in, you will get a JWT Token
 
 ### Get user profile
 
-> POST -> http://localhost:8090/api/auth/me
+> POST -> http://localhost:8090/api/users/me
 
 If you access this route without JWT token, It should return `401 Unauthorized`. Now try with JWT token
 
@@ -48,6 +48,14 @@ Authorization: Bearer <JWT_Token>
 ```
 
 This should return the user profile
+
+### Delete my account
+
+> DELETE -> http://localhost:8090/api/users/me
+
+### Delete specific user by admin
+
+> DELETE -> http://localhost:8090/api/users/{user}
 
 ### Logout
 
@@ -68,44 +76,37 @@ Currently fixed to only 3 roles
 -   Admin
 
 ```json
+// Example response
 {
-    "id": 1,
+    "id": 4,
     "name": "John Doe",
     "email": "johndoe@dev.io",
     "email_verified_at": null,
     "two_factor_secret": null,
     "two_factor_recovery_codes": null,
     "two_factor_confirmed_at": null,
-    "created_at": "2023-08-31T07:44:30.000000Z",
-    "updated_at": "2023-08-31T07:44:30.000000Z",
+    "created_at": "2023-09-02T19:49:59.000000Z",
+    "updated_at": "2023-09-02T19:49:59.000000Z",
     "roles": [
         {
             "id": 1,
             "name": "user",
-            "created_at": "2023-08-31T07:44:17.000000Z",
-            "updated_at": "2023-08-31T07:44:17.000000Z",
+            "created_at": "2023-09-02T17:14:04.000000Z",
+            "updated_at": "2023-09-02T17:14:04.000000Z",
             "pivot": {
-                "user_id": 1,
+                "user_id": 4,
                 "role_id": 1
             }
-        },
-        {
-            "id": 2,
-            "name": "rider",
-            "created_at": "2023-08-31T07:44:17.000000Z",
-            "updated_at": "2023-08-31T07:44:17.000000Z",
-            "pivot": {
-                "user_id": 1,
-                "role_id": 2
-            }
         }
-    ]
+    ],
+    "user_profile": null,
+    "rider_profile": null
 }
 ```
 
 Add role to user
 
-> POST -> http://localhost:8090/api/user/role
+> POST -> http://localhost:8090/api/users/role
 
 ```json
 {
@@ -116,7 +117,7 @@ Add role to user
 
 Remove role from user
 
-> DELETE -> http://localhost:8090/api/user/role
+> DELETE -> http://localhost:8090/api/users/role
 
 ```json
 {
@@ -131,7 +132,7 @@ User can has 2 profile. One for normal user and second for rider. This action wi
 
 User profile
 
-> PUT -> http://localhost:8090/api/user/profile/user
+> PUT -> http://localhost:8090/api/users/profile/user
 
 ```json
 {
@@ -143,7 +144,7 @@ User profile
 
 Rider profile
 
-> PUT -> http://localhost:8090/api/user/profile/rider
+> PUT -> http://localhost:8090/api/users/profile/rider
 
 ```json
 {
