@@ -7,6 +7,19 @@ Handle authentication, authorization, and manage user profile
 -   [laravel/fortify](https://laravel.com/docs/10.x/fortify) - For setup authentication service
 -   [tymon/jwt-auth](https://github.com/tymondesigns/jwt-auth) - For provide authentication using JWT
 
+## Features
+
+1. Register
+2. Login
+3. Logout
+4. Get user profile
+5. Delete my account
+6. Delete specific user by admin
+7. Add role to user
+8. Remove role from user
+9. Update user profile
+10. Update rider profile
+
 ## API
 
 Service run at http://localhost:8090
