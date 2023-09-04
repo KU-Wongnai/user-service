@@ -2,6 +2,7 @@
 
 namespace App\Actions\Fortify;
 
+use App\Jobs\UserCreated;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -42,6 +43,11 @@ class CreateNewUser implements CreatesNewUsers
         // Add default role (USER) to the user
         $default_role = Role::where('name', '=', 'user')->first();
         $user->roles()->attach($default_role->id);
+
+        $user->refresh();
+        
+        // Publish an event to the message queue
+        UserCreated::dispatch($user->toArray());
 
         return $user;
     }
