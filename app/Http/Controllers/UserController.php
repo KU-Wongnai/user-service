@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UserProfile;
 use Illuminate\Support\Facades\Gate;
+use App\RabbitMQPublisher;
 
 class UserController extends Controller
 {
@@ -154,7 +155,10 @@ class UserController extends Controller
             $validateInput
         );
 
-        // TODO: publish to message queue
+        // Ppublish to message queue
+        $publisher = new RabbitMQPublisher();
+        $publisher->declareExchange('events.user', 'topic');
+        $publisher->publish(json_encode($user), 'events.user', 'user.updated');
 
         return [
             'message' => 'User profile created successfully',

@@ -6,9 +6,11 @@ use App\Jobs\UserCreated;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
+use App\RabbitMQPublisher;
 
 class CreateNewUser implements CreatesNewUsers
 {
@@ -47,7 +49,12 @@ class CreateNewUser implements CreatesNewUsers
         $user->refresh();
         
         // Publish an event to the message queue
-        UserCreated::dispatch($user->toArray());
+        // UserCreated::dispatch($user->toArray())->onQueue('users');
+
+        $publisher = new RabbitMQPublisher();
+        $publisher->declareExchange('events.user', 'topic');
+        // $publisher->publish('Hello from user service, user has been created!', 'events.user.created', 'user.created');
+        $publisher->publish(json_encode($user), 'events.user', 'user.created');
 
         return $user;
     }
