@@ -20,6 +20,39 @@ Handle authentication, authorization, and manage user profile
 9. Update user profile
 10. Update rider profile
 
+## Setup
+
+Install laravel dependencies
+
+```sh
+docker run --rm \
+    -u "$(id -u):$(id -g)" \
+    -v "$(pwd):/var/www/html" \
+    -w /var/www/html \
+    laravelsail/php82-composer:latest \
+    composer install --ignore-platform-reqs
+```
+
+Copy `.env.example` to `.env`
+
+Generate JWT secret
+
+```sh
+sail artisan jwt:secret
+```
+
+Migrate and seed database
+
+```sh
+sail artisan migrate:fresh --seed
+```
+
+Start the service
+
+```sh
+sail up -d
+```
+
 ## API
 
 Service run at http://localhost:8090
