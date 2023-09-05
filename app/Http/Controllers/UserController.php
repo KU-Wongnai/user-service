@@ -158,7 +158,13 @@ class UserController extends Controller
         // Ppublish to message queue
         $publisher = new RabbitMQPublisher();
         $publisher->declareExchange('events.user', 'topic');
-        $publisher->publish(json_encode($user), 'events.user', 'user.updated');
+        $publisher->publish(json_encode([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'emailVerifiedAt' => $user->email_verified_at,
+            'avatar' => $user->userProfile->avatar,
+        ]), 'events.user', 'user.updated');
 
         return [
             'message' => 'User profile created successfully',

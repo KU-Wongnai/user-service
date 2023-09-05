@@ -54,7 +54,13 @@ class CreateNewUser implements CreatesNewUsers
         $publisher = new RabbitMQPublisher();
         $publisher->declareExchange('events.user', 'topic');
         // $publisher->publish('Hello from user service, user has been created!', 'events.user.created', 'user.created');
-        $publisher->publish(json_encode($user), 'events.user', 'user.created');
+        $publisher->publish(json_encode([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'emailVerifiedAt' => $user->email_verified_at,
+            'avatar' => null, // There is no way user will have an avatar at this point, so we set it to null
+        ]), 'events.user', 'user.created');
 
         return $user;
     }
