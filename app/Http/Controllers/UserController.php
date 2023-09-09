@@ -9,6 +9,8 @@ use App\Models\User;
 use App\Models\UserProfile;
 use Illuminate\Support\Facades\Gate;
 use App\RabbitMQPublisher;
+use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Http;
 
 class UserController extends Controller
 {
@@ -127,7 +129,7 @@ class UserController extends Controller
             'phone_number' => ['required', 'size:10'],
             'birth_date' => ['required', 'date'],
             'address' => ['nullable', 'min:1', 'max:255'],
-            'avatar' => ['nullable'],
+            'avatar' => ['nullable', 'file', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
             'student_id' => ['nullable', 'size:10'],
             'faculty' => ['nullable', 'min:1', 'max:255'],
             'major' => ['nullable', 'min:1', 'max:255'],
@@ -148,7 +150,34 @@ class UserController extends Controller
             abort(403, "You are not allowed to create profile for other user");
         }
 
-        // unset($validateInput['user_id']);
+        if ($request->hasFile('avatar')) {
+            $avatar = $request->file('avatar');
+            
+            $client = new Client(['base_uri' => 'http://file_storage_server:80/api/']);
+
+            $response = $client->request('POST', 'upload', [
+                'headers' => [
+                    'accept' => 'application/json'
+                ],
+                'multipart' => [
+                    [
+                        'name' => 'file', // Name of the file input field on the server
+                        'contents' => file_get_contents($avatar->path()), // Read file contents
+                        'filename' => $avatar->getClientOriginalName(), // Original file name
+                    ],
+                    [
+                        'name' => 'file_name', // Name of the file name field on the server
+                        'contents' => 'users/' . $user->id, // User-specific file name
+                    ],
+                ],
+            ]);
+
+            $responseBody = $response->getBody()->getContents();
+            $responseData = json_decode($responseBody, true);
+            
+            $validateInput['avatar'] = $responseData['data'];
+        }
+
 
         $user->userProfile()->updateOrCreate(
             ['user_id' => $user->id], 
@@ -182,7 +211,7 @@ class UserController extends Controller
             'birth_date' => ['required', 'date'],
             'id_card' => ['required', 'size:13'],
             'bank_account_number' => ['required', 'size:10'],
-            'avatar' => ['nullable'],
+            'avatar' => ['nullable', 'file', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
             'student_id' => ['nullable', 'size:10'],
             'faculty' => ['nullable', 'min:1', 'max:255'],
             'major' => ['nullable', 'min:1', 'max:255'],
@@ -200,6 +229,34 @@ class UserController extends Controller
             abort(403, "You are not allowed to create profile for other user");
         }
 
+        if ($request->hasFile('avatar')) {
+            $avatar = $request->file('avatar');
+            
+            $client = new Client(['base_uri' => 'http://file_storage_server:80/api/']);
+
+            $response = $client->request('POST', 'upload', [
+                'headers' => [
+                    'accept' => 'application/json'
+                ],
+                'multipart' => [
+                    [
+                        'name' => 'file', // Name of the file input field on the server
+                        'contents' => file_get_contents($avatar->path()), // Read file contents
+                        'filename' => $avatar->getClientOriginalName(), // Original file name
+                    ],
+                    [
+                        'name' => 'file_name', // Name of the file name field on the server
+                        'contents' => 'riders/' . $user->id, // User-specific file name
+                    ],
+                ],
+            ]);
+
+            $responseBody = $response->getBody()->getContents();
+            $responseData = json_decode($responseBody, true);
+            
+            $validateInput['avatar'] = $responseData['data'];
+        }
+        
         $user->riderProfile()->updateOrCreate(
             ['user_id' => $user->id], 
             $validateInput
