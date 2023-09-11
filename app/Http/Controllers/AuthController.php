@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
@@ -14,7 +15,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('auth:api', ['except' => ['login', 'loginWithGoogle', 'handleGoogleCallback']]);
     }
 
     /**
@@ -29,6 +30,27 @@ class AuthController extends Controller
         if (! $token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+
+        return $this->respondWithToken($token);
+    }
+
+    public function loginWithGoogle() {
+        return Socialite::driver('google')->stateless()->redirect();
+    }
+
+    public function handleGoogleCallback() {
+        $googleUser = Socialite::driver('google')->stateless()->user();
+    
+        $user = User::updateOrCreate([
+            'provider_id' => $googleUser->id,
+            'provider' => 'google',
+        ], [
+            'name' => $googleUser->name,
+            'email' => $googleUser->email,
+            'email_verified_at' => now(),
+        ]);
+
+        $token = auth()->login($user);
 
         return $this->respondWithToken($token);
     }
