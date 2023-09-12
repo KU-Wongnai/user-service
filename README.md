@@ -34,6 +34,15 @@ docker run --rm \
 ```
 
 Copy `.env.example` to `.env`
+```sh
+cp .env.example .env
+```
+
+Start the service
+
+```sh
+sail up -d
+```
 
 Generate JWT secret
 
@@ -45,12 +54,6 @@ Migrate and seed database
 
 ```sh
 sail artisan migrate:fresh --seed
-```
-
-Start the service
-
-```sh
-sail up -d
 ```
 
 ## API
