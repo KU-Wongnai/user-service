@@ -34,9 +34,12 @@ docker run --rm \
 ```
 
 Copy `.env.example` to `.env`
+
 ```sh
 cp .env.example .env
 ```
+
+Make sure you have the network called `ku-wongnai_ku-wongnai` this use for connect to RabbitMQ
 
 Start the service
 
@@ -54,6 +57,18 @@ Migrate and seed database
 
 ```sh
 sail artisan migrate:fresh --seed
+```
+
+Generate application key
+
+```sh
+sail artisan key:generate
+```
+
+If some service can't be run, for example, MySQl run the following command
+
+```sh
+sail down --volumes
 ```
 
 ## API

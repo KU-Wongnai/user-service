@@ -21,6 +21,7 @@ services:
             - ".:/var/www/html"
         networks:
             - sail
+            - ku-wongnai_ku-wongnai
         depends_on:
             - mysql
             - redis
@@ -78,6 +79,8 @@ services:
 networks:
     sail:
         driver: bridge
+    ku-wongnai_ku-wongnai:
+        external: true
 volumes:
     sail-mysql:
         driver: local
