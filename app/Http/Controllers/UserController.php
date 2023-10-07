@@ -6,11 +6,9 @@ use App\Models\RiderProfile;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\UserProfile;
 use Illuminate\Support\Facades\Gate;
 use App\RabbitMQPublisher;
-use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
@@ -39,19 +37,27 @@ class UserController extends Controller
                     ->find($user->id);
     }
 
-    /**
-     * Get user by email, get email from parameter
-     */
-    public function findByEmail($email) {
-        return User::with('roles')
+    public function findByEmail(Request $request) {
+        $request->merge(['email' => $request->route('email')]);
+        $request->validate([
+            'email' => ['required', 'email'],
+        ]);
+
+        $email = $request->get('email');
+        $user = User::with('roles')
                     ->with('userProfile')
                     ->with('riderProfile')
                     ->where('email', '=', $email)
                     ->first();
+            
+        if ($user == null) {
+            throw ValidationException::withMessages([
+                'email' => ['No user was found with the given email'],
+            ]);
+        }
+
+        return response()->json($user);
     }
-
-
-    
 
     /**
      * Get the authenticated User.
