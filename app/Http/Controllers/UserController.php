@@ -19,12 +19,24 @@ class UserController extends Controller
      * Get all users
      */
     public function findAll() {
-        Gate::authorize('isAdmin', User::class);
+        // Gate::authorize('isAdmin', User::class);
         
         return User::with('roles')
                     ->with('userProfile')
                     ->with('riderProfile')
                     ->get();
+    }
+
+    /**
+     * Get user by id
+     */
+    public function findById(User $user) {
+        // Gate::authorize('isAdmin', User::class);
+        
+        return User::with('roles')
+                    ->with('userProfile')
+                    ->with('riderProfile')
+                    ->find($user->id);
     }
 
     /**

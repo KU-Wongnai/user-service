@@ -36,10 +36,12 @@ Route::group([
 
 });
 
+Route::get('users/', [UserController::class, 'findAll']);
+Route::get('users/{user}', [UserController::class, 'findById']);
+
 Route::middleware('auth:api')->group(function () {
     
     Route::prefix('users')->group(function () {
-        Route::get('', [UserController::class, 'findAll']);
         Route::post('me', [UserController::class, 'me']);
         Route::delete('me', [UserController::class, 'deleteMyAccount']);
         
