@@ -40,6 +40,20 @@ class UserController extends Controller
     }
 
     /**
+     * Get user by email, get email from parameter
+     */
+    public function findByEmail($email) {
+        return User::with('roles')
+                    ->with('userProfile')
+                    ->with('riderProfile')
+                    ->where('email', '=', $email)
+                    ->first();
+    }
+
+
+    
+
+    /**
      * Get the authenticated User.
      *
      * @return \Illuminate\Http\JsonResponse

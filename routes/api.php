@@ -38,6 +38,7 @@ Route::group([
 
 Route::get('users/', [UserController::class, 'findAll']);
 Route::get('users/{user}', [UserController::class, 'findById']);
+Route::get('users/email/{email}', [UserController::class, 'findByEmail']);
 
 Route::middleware('auth:api')->group(function () {
     
