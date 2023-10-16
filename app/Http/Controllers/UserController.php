@@ -112,6 +112,17 @@ class UserController extends Controller
         }
 
         $user->markEmailAsVerified();
+        $user->refresh();
+
+        $publisher = new RabbitMQPublisher();
+        $publisher->declareExchange('events.user', 'topic');
+        $publisher->publish(json_encode([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'emailVerifiedAt' => $user->email_verified_at,
+            'avatar' => $user->userProfile ? $user->userProfile->avatar : null,
+        ]), 'events.user', 'user.updated');
 
         // Invalidate token
         auth()->invalidate();
@@ -232,7 +243,7 @@ class UserController extends Controller
             'name' => $user->name,
             'email' => $user->email,
             'emailVerifiedAt' => $user->email_verified_at,
-            'avatar' => $user->userProfile->avatar,
+            'avatar' => $user->userProfile ? $user->userProfile->avatar : null,
         ]), 'events.user', 'user.updated');
 
         return [

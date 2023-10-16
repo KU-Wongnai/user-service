@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Laravel\Socialite\Facades\Socialite;
+use App\RabbitMQPublisher;
 
 class AuthController extends Controller
 {
@@ -40,7 +41,15 @@ class AuthController extends Controller
 
     public function handleGoogleCallback() {
         $googleUser = Socialite::driver('google')->stateless()->user();
-    
+        
+        $user = User::where('provider_id', $googleUser->id)->where('provider', 'google')->first();
+
+        // If user already exists, just log them in
+        if ($user) {
+            $token = auth()->login($user);
+            return $this->respondWithToken($token);
+        } 
+        
         $user = User::updateOrCreate([
             'provider_id' => $googleUser->id,
             'provider' => 'google',
@@ -49,6 +58,17 @@ class AuthController extends Controller
             'email' => $googleUser->email,
             'email_verified_at' => now(),
         ]);
+
+        $publisher = new RabbitMQPublisher();
+        $publisher->declareExchange('events.user', 'topic');
+        $publisher->publish(json_encode([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'emailVerifiedAt' => $user->email_verified_at,
+            'avatar' => null, // There is no way user will have an avatar at this point, so we set it to null
+        ]), 'events.user', 'user.created');
+
 
         $token = auth()->login($user);
 
