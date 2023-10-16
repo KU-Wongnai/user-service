@@ -202,8 +202,8 @@ class UserController extends Controller
      */
     public function createUserProfile(Request $request) {
         $validateInput = $request->validate([
-            'phone_number' => ['required', 'size:10'],
-            'birth_date' => ['required', 'date'],
+            'phone_number' => ['nullable', 'size:10'],
+            'birth_date' => ['nullable', 'date'],
             'address' => ['nullable', 'min:1', 'max:255'],
             'avatar' => ['nullable', 'string'],
             'student_id' => ['nullable', 'size:10'],
