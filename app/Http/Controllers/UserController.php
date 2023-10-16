@@ -116,11 +116,7 @@ class UserController extends Controller
         // Invalidate token
         auth()->invalidate();
 
-        // $user->markEmailAsVerified();
-        return response()->json([
-            'message' => 'Email verified successfully',
-            'success' => true,
-        ]);
+        return redirect(config('app.frontend_url') . '/settings');
     }
     
     /**
