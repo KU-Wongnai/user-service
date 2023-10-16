@@ -50,6 +50,8 @@ Route::middleware('auth:api')->group(function () {
         Route::post('role', [UserController::class, 'addRole']);
         Route::delete('role', [UserController::class, 'removeRole']);
 
+        Route::post('/v1/email/verify', [UserController::class, 'sendEmailVerificationNotification']);
+        Route::get('/v1/email/verify', [UserController::class, 'verifyEmail'])->name('users.verification.verify');
 
         Route::put('profile/user', [UserController::class, 'createUserProfile']);
         Route::put('profile/rider', [UserController::class, 'createRiderProfile']);

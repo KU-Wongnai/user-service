@@ -31,7 +31,8 @@ services:
     #         - "file-storage_sail:file_storage_server"
 
     mysql:
-        image: "mysql/mysql-server:8.0"
+        # image: "mysql/mysql-server:8.0"
+        image: "mysql"
         ports:
             - "${FORWARD_DB_PORT:-3306}:3306"
         environment:

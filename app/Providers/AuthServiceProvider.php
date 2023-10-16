@@ -4,6 +4,10 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Config;
+use Carbon\Carbon;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -21,6 +25,20 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        VerifyEmail::createUrlUsing(function ($notifiable) {    
+
+            $baseUrl = Config::get('app.base_url');
+
+            $verifyUrl = URL::temporarySignedRoute(
+                'users.verification.verify',
+                Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
+                [
+                    'token' => auth()->tokenById(auth()->user()->id),
+                ],
+                false,
+            );
+    
+            return $baseUrl . $verifyUrl;
+        });
     }
 }

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use App\RabbitMQPublisher;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
@@ -72,6 +73,54 @@ class UserController extends Controller
                     ->find(auth()->user()->id);
                     
         return response()->json($user);
+    }
+
+    /**
+     * Sending email verification
+     */
+    public function sendEmailVerificationNotification() {
+        $user = User::find(auth()->user()->id);
+        $user->sendEmailVerificationNotification();
+        return response()->json([
+            'message' => 'Email verification sent successfully',
+            'success' => true,
+        ]);
+    }
+
+    /**
+     * Verify email
+     */
+    public function verifyEmail(Request $request) {
+        // $user = User::find(auth()->user()->id);
+        $request->validate([
+            'token' => ['required'],
+        ]);
+
+        // Verify jwt
+        $token = $request->get('token');
+
+        Log::info("Token: {$token}");
+
+        $user = auth()->setToken($token)->user();
+
+        if ($user == null) {
+            abort(400, "Invalid token");
+        }
+
+        if ($user->hasVerifiedEmail()) {
+            abort(400, "Email already verified");
+        }
+
+        $user->markEmailAsVerified();
+
+        // Invalidate token
+        auth()->invalidate();
+
+        // $user->markEmailAsVerified();
+        return response()->json([
+            'message' => 'Email verified successfully',
+            'success' => true,
+        ]);
     }
     
     /**
