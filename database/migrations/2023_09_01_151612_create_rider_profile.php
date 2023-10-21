@@ -14,12 +14,17 @@ return new class extends Migration
         Schema::create('rider_profiles', function (Blueprint $table) {
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             
-            // $table->id();
             $table->string('phone_number');
+            $table->date('birth_date')->nullable();
+            
             $table->string('id_card');
-            $table->date('birth_date');
+            $table->string('id_card_photo');
+
             $table->string('bank_account_number');
-        
+            $table->string('bank_account_name'); // Bank account holder name.
+            $table->string('bank_account_code'); // https://docs.opn.ooo/supported-banks
+            $table->string('book_bank_photo'); 
+            
             $table->string('avatar')->nullable();
             
             // For student but not required because other rider may not be a student
