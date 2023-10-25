@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Laravel\Socialite\Facades\Socialite;
 use App\RabbitMQPublisher;
+use App\Http\Controllers\NotificationSender;
 
 class AuthController extends Controller
 {
@@ -69,6 +70,11 @@ class AuthController extends Controller
             'avatar' => null, // There is no way user will have an avatar at this point, so we set it to null
         ]), 'events.user', 'user.created');
 
+        // Sent email       
+        $notificationSender = new NotificationSender();
+        $notificationSender->sendEmailWelcomeUser($user->email);
+        // Send in-app notification
+        $notificationSender->sendInAppWelcomeNewUser($user->id);
 
         $token = auth()->login($user);
 

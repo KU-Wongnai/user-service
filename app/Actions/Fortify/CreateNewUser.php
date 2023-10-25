@@ -2,6 +2,7 @@
 
 namespace App\Actions\Fortify;
 
+use App\Http\Controllers\NotificationSender;
 use App\Jobs\UserCreated;
 use App\Models\Role;
 use App\Models\User;
@@ -45,6 +46,12 @@ class CreateNewUser implements CreatesNewUsers
         // Add default role (USER) to the user
         $default_role = Role::where('name', '=', 'user')->first();
         $user->roles()->attach($default_role->id);
+
+        // Sent email       
+        $notificationSender = new NotificationSender();
+        $notificationSender->sendEmailWelcomeUser($user->email);
+        // Send in-app notification
+        $notificationSender->sendInAppWelcomeNewUser($user->id);
 
         $user->refresh();
         

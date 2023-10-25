@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\NotificationSender;
 use App\Http\Controllers\UserController;
 use App\RabbitMQPublisher;
 use Illuminate\Http\Request;
@@ -68,7 +69,11 @@ Route::get('email', function () {
     
     $publisher = new RabbitMQPublisher();
     $publisher->declareExchange('events.notification', 'topic');
-    $publisher->publish(json_encode([ 'email' => 'test2@gmail.com', 'type' => 'welcome.user' ]), 'events.notification', 'email.welcome');
+    $publisher->publish(json_encode([ 'to' => 'test2@gmail.com', 'type' => 'email.welcome.user' ]), 'events.notification', 'email.welcome');
     
     return "Email sent";
 });
+
+
+Route::get('email/{email}', [NotificationSender::class, 'sendEmailWelcomeUser']);
+Route::get('inapp/{id}', [NotificationSender::class, 'sendInAppWelcomeNewUser']);

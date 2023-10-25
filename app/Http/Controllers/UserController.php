@@ -172,6 +172,12 @@ class UserController extends Controller
         }
 
         $user->roles()->attach($role->id);
+        // if role is rider, send welcome
+        if ($role->id === 2) {
+            $notificationSender = new NotificationSender();
+            $notificationSender->sendEmailWelcomeRider($user->email);
+            $notificationSender->sendInAppWelcomeNewRider($user->id);
+        }
 
         return [
             'message' => 'Role added successfully',

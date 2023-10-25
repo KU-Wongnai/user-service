@@ -24,5 +24,15 @@ class UserSeeder extends Seeder
 
         $user->roles()->sync([1, 3]); // Add user role and admin role
 
+
+        $user = new User();
+        $user->name = "User2";
+        $user->email = "User2@example.com";
+        $user->password = Hash::make("12345678");
+
+        $user->save();
+
+        $user->roles()->sync([1]); // Add user role and admin role
+
     }
 }

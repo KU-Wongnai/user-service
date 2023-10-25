@@ -22,6 +22,8 @@ services:
         networks:
             - sail
             - ku-wongnai_ku-wongnai
+            - user-service_sail
+            - kuwongnai
         depends_on:
             - mysql
             - redis
@@ -80,7 +82,11 @@ services:
 networks:
     sail:
         driver: bridge
+    user-service_sail:
+        external: true
     ku-wongnai_ku-wongnai:
+        external: true
+    kuwongnai:
         external: true
 volumes:
     sail-mysql:
