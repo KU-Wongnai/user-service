@@ -165,6 +165,22 @@ class NotificationSender extends Controller
         return "InApp ThankRider sent";
     }
 
+    public function sendInAppRiderCreateAccount(String $id)
+    {
+        $publisher = new RabbitMQPublisher();
+        $publisher->declareExchange('events.notification', 'topic');
+        $publisher->publish(json_encode([ 'to' => $id, 'type' => 'noti.RiderCreateAccount' ]), 'events.notification', 'email.welcome');
+        return "InApp RiderCreateAccount sent";
+    }
+
+    public function sendInAppRiderRejectedAccount(String $id)
+    {
+        $publisher = new RabbitMQPublisher();
+        $publisher->declareExchange('events.notification', 'topic');
+        $publisher->publish(json_encode([ 'to' => $id, 'type' => 'noti.RiderRejectedAccount' ]), 'events.notification', 'email.welcome');
+        return "InApp RiderRejectedAccount sent";
+    }
+
     public function sendInAppWelcomeNewRestaurant(String $id)
     {
         $publisher = new RabbitMQPublisher();
@@ -180,6 +196,8 @@ class NotificationSender extends Controller
         $publisher->publish(json_encode([ 'to' => $id, 'type' => 'noti.RestaurantHasReview' ]), 'events.notification', 'email.welcome');
         return "InApp RestaurantHasReview sent";
     }
+
+
 
 
 }

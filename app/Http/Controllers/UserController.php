@@ -172,12 +172,6 @@ class UserController extends Controller
         }
 
         $user->roles()->attach($role->id);
-        // if role is rider, send welcome
-        if ($role->id === 2) {
-            $notificationSender = new NotificationSender();
-            $notificationSender->sendEmailWelcomeRider($user->email);
-            $notificationSender->sendInAppWelcomeNewRider($user->id);
-        }
 
         return [
             'message' => 'Role added successfully',
@@ -289,6 +283,9 @@ class UserController extends Controller
 
         // TODO: publish to message queue
 
+        $notificationSender = new NotificationSender();
+        $notificationSender->sendInAppRiderCreateAccount($user->id);
+
         return [
             'message' => 'Rider profile created successfully',
             'success' => true,
@@ -349,6 +346,16 @@ class UserController extends Controller
         $riderProfile->status = $request->get('status');
         $riderProfile->rider_verified_at = $request->get('status') === 'verified' ? now() : null;
         $riderProfile->save();
+
+        if ($request->get('status') === 'verified') {
+            $notificationSender = new NotificationSender();
+            $notificationSender->sendEmailWelcomeRider($user->email);
+            $notificationSender->sendInAppWelcomeNewRider($user->id);
+        }
+        if ($request->get('status') === 'rejected') {
+            $notificationSender = new NotificationSender();
+            $notificationSender->sendInAppRiderRejectedAccount($user->id);
+        }
 
         return [
             'message' => 'Status set successfully',
