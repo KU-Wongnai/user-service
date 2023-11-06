@@ -37,6 +37,7 @@ Copy `.env.example` to `.env`
 
 ```sh
 cp .env.example .env
+cp .env.example .env.testing
 ```
 
 Make sure you have the network called `ku-wongnai_ku-wongnai` this use for connect to RabbitMQ
